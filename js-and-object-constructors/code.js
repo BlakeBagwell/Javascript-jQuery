@@ -27,31 +27,45 @@ Hand.prototype.addCard = function(card) {
   this.hand.push(card);
 };
 
-Hand.prototype.getPoints = function () {
-  var pointTotal = 0;
-  return this.hand.reduce(function(a, b) {
-    return a.point + b.point;
+Hand.prototype.getPoints = function() {
+  // sorts aces to bottom, since thier points are flexible.
+  var sortedHand = this.hand.sort(function(a, b) {
+    return b.point - a.point;
   });
+
+  return sortedHand.reduce(function(a, b) {
+    if (b.point <= 10 && b.point > 1) {//cards 2-10
+      return a + b.point;
+    }
+    else if (b.point > 10) {//facecards
+      return a + 10;
+    }
+    else {
+      if (11 + a <= 21) {//aces
+        return a + 11;
+        }
+      else {
+        return a + 1;
+      }
+    }
+  }, 0);
 };
 
 function Deck() {
   this.deck = [];
-  
+  var suits = ['diamonds', 'hearts', 'spades', 'clubs'];
+  for (var i = 0; i < 13; i++) {
+    for (var j = 0; j < 4; j++) {
+      newCard = new Card(i, suits[j]);
+      this.deck.push(newCard);
+    }
+  }
 }
 
-Deck.prototype.draw() {
+Deck.prototype.sDeck = function(){
+  this.deck = _.shuffle(this.deck);
+};
 
-}
-
-Deck.protoype.shuffle() {
-
-}
-
-var newDeck = new Deck();
-
-var myHand = new Hand();
-myHand.addCard(new Card(5, 'diamonds'));
-myHand.addCard(new Card(13, 'spades'));
-
-
-console.log(myHand.getPoints());
+Deck.prototype.draw = function(deck){
+  return deck.pop();
+};

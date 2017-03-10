@@ -10,27 +10,29 @@
     <script>
 
     $(document).ready(function () {
-      var deck = _.shuffle(newDeck());
-      var dealer = [];
-      var player = [];
+      var deck = new Deck();
+      deck.sDeck();
+      var dealer = new Hand();
+      var player = new Hand();
 
       //deal function
       $('#deal-button').click(function () {
         for (var i = 0; i < 2; i++){
-          dealer.push(deck.pop());
-          player.push(deck.pop());
+
+          dealer.addCard(deck.draw());
+          player.addCard(deck.draw());
         }
 
-        dealer.forEach(function(a){
-          $('#dealer-hand').append('<img src="' + getCardImageUrl(a) + '">');
+        dealer.hand.forEach(function(card){
+          $('#dealer-hand').append('<img src="' + card.getImageUrl() + '">');
         })
 
-        player.forEach(function(a){
-          $('#player-hand').append('<img src="' + getCardImageUrl(a) + '">');
+        player.hand.forEach(function(card){
+          $('#player-hand').append('<img src="' + card.getImageUrl() + '">');
         })
 
-        $('#dealer-points').text(calculatePoints(dealer));
-        $('#player-points').text(calculatePoints(player));
+        $('#dealer-points').text(dealer.getPoints());
+        $('#player-points').text(player.getPoints());
         // calc points
 
       });
@@ -38,14 +40,14 @@
 
       //hit function
       $('#hit-button').click(function() {
-        var card = deck.pop();
-        player.push(card);
-        $('#player-hand').append('<img src="' + getCardImageUrl(card) + '">')
+        var card = deck.draw();
+        player.addCard(card);
+        $('#player-hand').append('<img src="' + card.getImageUrl(card) + '">')
 
-        $('#player-points').text(calculatePoints(player));//calc player points
+        $('#player-points').text(player.getPoints());//calc player points
 
         //bust detection
-        if (calculatePoints(player) > 21) {
+        if (player.getPoints() > 21) {
           $('#messages').text('Player Bust: Dealer Wins!');
 
         }
@@ -53,23 +55,26 @@
       })// end hit function
 
       $('#stand-button').click(function() {
-        while (calculatePoints(dealer) < 17) {
-          var card = deck.pop();
-          dealer.push(card);
-          $('#dealer-hand').append('<img src="' + getCardImageUrl(card) + '">')
+        if (dealer.getPoints() === player.getPoints() && dealer.getPoints() > 16) {
+          $('#messages').text('PUSH');
+        }
+        while (dealer.getPoints() < player.getPoints()  || dealer.getPoints() < 17) {
+          var card = deck.draw();
+          dealer.addCard(card);
+          $('#dealer-hand').append('<img src="' + card.getImageUrl(card) + '">')
 
-          $('#dealer-points').text(calculatePoints(dealer));//calc player points
+          $('#dealer-points').text(dealer.getPoints());//calc player points
 
           //bust detection
-          if (calculatePoints(dealer) > calculatePoints(player)) {
-            if (calculatePoints(dealer) > 21) {
+          if (dealer.getPoints() > player.getPoints()) {
+            if (dealer.getPoints() > 21) {
               $('#messages').text('Dealer Bust: Player Wins!');
             }
             else {
               $('#messages').text('Dealer Wins!');
             }
           }
-          else if (calculatePoints(dealer) === calculatePoints(player)) {
+          else if (dealer.getPoints() === player.getPoints()) {
             $('#messages').text('PUSH');
           }
 
@@ -77,12 +82,25 @@
             $('#messages').text('Player Wins!');
           }
         }
+        // if (dealer.getPoints() > player.getPoints() && dealer.getPoints() <= 21) {
+        //   $('#messages').text('Dealer Wins!')
+        // }
+        // else if (dealer.getPoints() === player.getPoints()) {
+        //
+        // }
       });
-      // $('#reset-button').click(function() {
-      //   var deck = _.shuffle(newDeck());
-      //   var dealer = [];
-      //   var player = [];
-      // });
+
+      $('#reset-button').click(function() {
+        deck = new Deck();
+        deck.sDeck();
+        dealer = new Hand();
+        player = new Hand();
+        $('#dealer-hand').text('');
+        $('#player-hand').text('');
+        $('#dealer-points').text(dealer.getPoints());
+        $('#player-points').text(player.getPoints());
+        $('#messages').text('')
+      });
 
 
 

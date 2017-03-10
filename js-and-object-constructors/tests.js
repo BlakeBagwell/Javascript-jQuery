@@ -1,3 +1,5 @@
+
+
 describe('Card', function () {
 
   it('should instantiate a card with a point and a suit', function() {
@@ -48,5 +50,48 @@ describe('Card', function () {
     card = new Card(11, 'hearts');
     expect(card.getImageUrl()).toEqual('images/jack_of_hearts.png');
   });
+});
 
+describe ('Hand', function (){
+
+  it('Hand constructor can add cards to itself with addCard method', function() {
+    var myHand = new Hand();
+    var card = new Card(2, 'diamonds');
+    myHand.addCard(card);
+  });
+
+  it('Get points should return 10 for all face cards', function() {
+    var myHand = new Hand();
+    var card = new Card(11, 'diamonds');
+    var card1 = new Card(12, 'diamonds');
+    myHand.addCard(card);
+    myHand.addCard(card1);
+    expect(myHand.getPoints()).toEqual(20);
+  });
+  it('Ace will equal its maximum beneficial value, or default to 1 if the hand total exceeds 21', function() {
+    var myHand = new Hand();
+    var card = new Card(1, 'diamonds');
+    var card1 = new Card(12, 'diamonds');
+    var card2 = new Card(12, 'diamonds');
+    myHand.addCard(card);
+    myHand.addCard(card1);
+    myHand.addCard(card2);
+    expect(myHand.getPoints()).toEqual(21);
+  });
+
+});
+
+describe ('Deck', function() {
+  it('Deck of 52 cards', function() {
+    var myDeck = new Deck();
+    expect(myDeck.deck.length).toEqual(52);
+  });
+
+  it('Shuffle should generally not return cards in the same order', function() {
+    var myDeck = new Deck();
+
+    var shuffshuff = myDeck.sDeck();
+    var shuffshuff2 = myDeck.sDeck();
+    expect(shuffshuff[0]).not.toEqual(shuffshuff2[0]);
+  });
 });
