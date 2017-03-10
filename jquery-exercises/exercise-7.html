@@ -18,7 +18,7 @@
 
     $(function() {
       $('#add-button').click(function() {
-        $('#todo-list').append('<li><button class="remove">Remove</button>' + $('#description').val() + '<input id="checkMe" type="checkbox"></li>');
+        $('#todo-list').append('<li><button class="remove">Remove</button><button class="edit">Edit</button>' + $('#description').val() + '<input class="checkMe" type="checkbox"></li>');
       });
 
       // var theButtons = $('#todo-list button.remove');
@@ -35,8 +35,18 @@
       //   console.log("sdfasdfasd");
       //   $(this).closest('li').toggleClass('str');
       // });
+      $('#todo-list').on('click', 'input.checkMe', function() {
+        console.log('help');
+        $(this).parent().toggleClass('str');
+      });
 
+      $('#todo-list').on('click', 'button.edit', function() {
+        $(this).parent().html('<button class="save">Save</button><input class="edit" type="text" name="description">')
+      });
 
+      $('#todo-list').on('click', 'button.save', function() {
+        $(this).parent().html('<button class="remove">Remove</button><button class="edit">Edit</button>' + $('.edit').val() + '<input class="checkMe" type="checkbox">')
+      });
     });
 
 

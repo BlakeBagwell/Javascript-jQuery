@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Blackjack</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="blackjack.js"></script>
+    <script src="jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+    <script>
+
+    $(document).ready(function () {
+      var deck = _.shuffle(newDeck());
+      var dealer = [];
+      var player = [];
+
+      //deal function
+      $('#deal-button').click(function () {
+        for (var i = 0; i < 2; i++){
+          dealer.push(deck.pop());
+          player.push(deck.pop());
+        }
+
+        dealer.forEach(function(a){
+          $('#dealer-hand').append('<img src="' + getCardImageUrl(a) + '">');
+        })
+
+        player.forEach(function(a){
+          $('#player-hand').append('<img src="' + getCardImageUrl(a) + '">');
+        })
+
+        $('#dealer-points').text(calculatePoints(dealer));
+        $('#player-points').text(calculatePoints(player));
+        // calc points
+
+      });
+      // end deal function
+
+      //hit function
+      $('#hit-button').click(function() {
+        var card = deck.pop();
+        player.push(card);
+        $('#player-hand').append('<img src="' + getCardImageUrl(card) + '">')
+
+        $('#player-points').text(calculatePoints(player));//calc player points
+
+        //bust detection
+        if (calculatePoints(player) > 21) {
+          $('#messages').text('Player Bust: Dealer Wins!');
+
+        }
+
+      })// end hit function
+
+      $('#stand-button').click(function() {
+        while (calculatePoints(dealer) < 17) {
+          var card = deck.pop();
+          dealer.push(card);
+          $('#dealer-hand').append('<img src="' + getCardImageUrl(card) + '">')
+
+          $('#dealer-points').text(calculatePoints(dealer));//calc player points
+
+          //bust detection
+          if (calculatePoints(dealer) > calculatePoints(player)) {
+            if (calculatePoints(dealer) > 21) {
+              $('#messages').text('Dealer Bust: Player Wins!');
+            }
+            else {
+              $('#messages').text('Dealer Wins!');
+            }
+          }
+          else if (calculatePoints(dealer) === calculatePoints(player)) {
+            $('#messages').text('PUSH');
+          }
+
+          else {
+            $('#messages').text('Player Wins!');
+          }
+        }
+      });
+      // $('#reset-button').click(function() {
+      //   var deck = _.shuffle(newDeck());
+      //   var dealer = [];
+      //   var player = [];
+      // });
+
+
+
+    }); // end of ready funciton
+
+    </script>
+  </head>
+  <body>
+    <div id="table">
+      <div id="messages"></div>
+      <label>Dealer: </label>
+      <label id="dealer-points" class="points"></label>
+      <div id="dealer-hand" class="hand">
+      </div>
+      <label>Player: </label>
+      <label id="player-points" class="points"></label>
+      <div id="player-hand" class="hand">
+      </div>
+      <div class="buttons">
+        <button id="deal-button">Deal</button>
+        <button id="hit-button">Hit</button>
+        <button id="stand-button">Stand</button>
+        <button id="reset-button">Reset</button>
+      </div>
+    </div>
+  </body>
+</html>
